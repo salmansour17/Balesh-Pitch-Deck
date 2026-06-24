@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balesh × Orbis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBFAF7;
+  --paper-2:#F2EFE8;
+  --ink:#15171A;
+  --ink-2:#2C2F34;
+  --ink-soft:#6A6E74;
+  --ink-faint:#A8AAA8;
+  --teal:#0E8FA3;
+  --teal-deep:#0A6B7A;
+  --teal-tint:#E3F0F2;
+  --rule:#1517141A;        /* hairline */
+  --rule-strong:#15171433;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:#1c1d1a;color:var(--ink);-webkit-font-smoothing:antialiased}
+
+/* ====== SCROLL MODE ====== */
+.deck{display:flex;flex-direction:column;align-items:center;gap:28px;padding:44px 20px 120px}
+.slide{
+  position:relative;width:min(1240px,95vw);aspect-ratio:16/9;overflow:hidden;background:var(--paper);
+  box-shadow:0 30px 70px -28px rgba(0,0,0,.45);
+  container-type:inline-size;
+  opacity:0;transform:translateY(18px);transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1);
+}
+.slide.in{opacity:1;transform:none}
+.pad{position:absolute;inset:0;padding:6.5cqw 7cqw;display:flex;flex-direction:column;z-index:2}
+
+/* INK (dark) slides */
+.ink{background:var(--ink);color:var(--paper)}
+.ink .micro,.ink .kicker{color:var(--teal)}
+.ink .rule,.ink .rule-t{background:rgba(255,255,255,.14)}
+.ink .ink-soft{color:#A6ABB0}
+.ink .num-idx{color:rgba(255,255,255,.35)}
+.ink .foot-brand{color:rgba(255,255,255,.5)}
+
+/* ====== GRID FURNITURE ====== */
+/* top hairline + kicker row */
+.topline{display:flex;align-items:center;justify-content:space-between;padding-bottom:1.6cqw;border-bottom:1px solid var(--rule-strong)}
+.ink .topline{border-color:rgba(255,255,255,.18)}
+.kicker{font-family:'JetBrains Mono',monospace;font-size:1.15cqw;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--teal)}
+.num-idx{font-family:'JetBrains Mono',monospace;font-size:1.15cqw;font-weight:500;letter-spacing:.1em;color:var(--ink-faint)}
+
+/* micro label */
+.micro{font-family:'JetBrains Mono',monospace;font-size:1.05cqw;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--teal)}
+
+/* type */
+.display{font-family:'Fraunces',serif;line-height:1.0;letter-spacing:-.02em;font-weight:600}
+h1,h2,h3{font-family:'Fraunces',serif;line-height:1.02;letter-spacing:-.02em;font-weight:600}
+.d-xl{font-family:'Fraunces',serif;font-weight:600;font-size:8.4cqw;line-height:.94;letter-spacing:-.03em}
+.d-lg{font-family:'Fraunces',serif;font-weight:600;font-size:5.4cqw;line-height:1.0;letter-spacing:-.025em}
+.d-md{font-family:'Fraunces',serif;font-weight:600;font-size:3.7cqw;line-height:1.03;letter-spacing:-.02em}
+.italic{font-style:italic;font-weight:500}
+.teal{color:var(--teal)}
+.lead{font-size:1.9cqw;line-height:1.5;color:var(--ink-soft);font-weight:400;max-width:48ch}
+.body{font-size:1.55cqw;line-height:1.55;color:var(--ink-soft);font-weight:400}
+.body b,.lead b{color:var(--ink);font-weight:600}
+.ink .body b,.ink .lead b{color:#fff}
+.mono{font-family:'JetBrains Mono',monospace}
+
+.rule{height:1px;background:var(--rule-strong);width:100%}
+.spacer{flex:1}
+
+/* foot */
+.foot-brand{position:absolute;bottom:4cqw;left:7cqw;font-family:'Fraunces',serif;font-weight:600;font-size:1.3cqw;color:var(--teal);font-style:italic;z-index:3}
+
+/* present-mode scale */
+body.present .kicker,body.present .num-idx{font-size:1.4cqh}
+body.present .micro{font-size:1.25cqh}
+body.present .d-xl{font-size:9.6cqh}
+body.present .d-lg{font-size:6.2cqh}
+body.present .d-md{font-size:4.3cqh}
+body.present .lead{font-size:2.25cqh}
+body.present .body{font-size:1.85cqh}
+body.present .foot-brand{font-size:1.5cqh;bottom:4.4cqh;left:7.6cqh}
+
+/* ====== 01 COVER ====== */
+.cover-logo{width:30cqw;max-width:430px;height:auto;display:block}
+body.present .cover-logo{width:36cqh;max-width:none}
+.s-cover .pad{justify-content:space-between}
+.cover-mid{display:flex;flex-direction:column;gap:3.2cqw}
+.cover-statement{font-family:'Fraunces',serif;font-weight:500;font-size:3.5cqw;line-height:1.14;letter-spacing:-.02em;max-width:20ch}
+body.present .cover-statement{font-size:4cqh}
+.cover-statement .teal{font-style:italic}
+.trust-row{display:flex;flex-direction:column;gap:1.2cqw}
+.trust-label{font-family:'JetBrains Mono',monospace;font-size:1cqw;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint)}
+body.present .trust-label{font-size:1.2cqh}
+.trust-names{display:flex;gap:2.4cqw;flex-wrap:wrap;font-family:'Inter';font-weight:600;font-size:1.35cqw;color:var(--ink-2)}
+body.present .trust-names{font-size:1.6cqh}
+.trust-names span{position:relative}
+.trust-names span:not(:last-child)::after{content:"";position:absolute;right:-1.2cqw;top:50%;width:4px;height:4px;border-radius:50%;background:var(--ink-faint);transform:translateY(-50%)}
+
+/* ====== image placeholders (swap-in zones) ====== */
+.img-ph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8cqw;border:1.5px dashed var(--teal);background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(14,143,163,.04) 10px,rgba(14,143,163,.04) 20px);color:var(--teal)}
+.img-ph-light{background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(14,143,163,.05) 10px,rgba(14,143,163,.05) 20px)}
+.img-ph-label{font-family:'JetBrains Mono';font-weight:600;font-size:1.4cqw;letter-spacing:.16em}
+.img-ph-hint{font-family:'JetBrains Mono';font-size:.95cqw;letter-spacing:.04em;color:var(--ink-faint);text-align:center;max-width:80%}
+body.present .img-ph-label{font-size:1.7cqh}
+body.present .img-ph-hint{font-size:1.15cqh}
+/* phone placeholder keeps phone dimensions */
+.phone-ph{justify-self:center;width:auto;height:62cqh;aspect-ratio:1000/2000}
+body.present .phone-ph{height:78cqh}
+/* dashboard placeholder keeps dashboard dimensions */
+.dash-ph{width:100%;aspect-ratio:16/10}
+
+/* ====== big statement (ink) slides ====== */
+.s-statement .pad{justify-content:center}
+.statement-grid{display:grid;grid-template-columns:1.45fr .55fr;gap:4cqw;align-items:center;flex:1}
+.statement-h{font-family:'Fraunces',serif;font-weight:600;font-size:6.6cqw;line-height:1.0;letter-spacing:-.03em}
+body.present .statement-h{font-size:7.4cqh}
+.statement-h .teal{font-style:italic}
+.statement-aside{border-left:1px solid rgba(255,255,255,.18);padding-left:3cqw;display:flex;flex-direction:column;gap:1.6cqw}
+.statement-aside .big-fig{font-family:'Fraunces',serif;font-weight:600;font-size:7cqw;line-height:.9;color:var(--teal);letter-spacing:-.03em}
+body.present .statement-aside .big-fig{font-size:8cqh}
+.statement-aside .fig-cap{font-family:'JetBrains Mono';font-size:1.05cqw;letter-spacing:.08em;text-transform:uppercase;color:#A6ABB0;line-height:1.5}
+body.present .statement-aside .fig-cap{font-size:1.25cqh}
+
+/* ====== two-column content ====== */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:5cqw;flex:1;align-items:center}
+.cols-3258{grid-template-columns:1.1fr .9fr}
+
+/* numbered list editorial */
+.elist{display:flex;flex-direction:column}
+.eitem{display:grid;grid-template-columns:auto 1fr;gap:1.8cqw;padding:1.8cqw 0;border-top:1px solid var(--rule)}
+.eitem:last-child{border-bottom:1px solid var(--rule)}
+.enum{font-family:'JetBrains Mono',monospace;font-size:1.2cqw;font-weight:500;color:var(--teal);padding-top:.3cqw}
+.eitem p{font-size:1.6cqw;line-height:1.4;color:var(--ink-2)}
+.eitem p b{font-weight:600;color:var(--ink)}
+body.present .enum{font-size:1.45cqh}
+body.present .eitem p{font-size:1.9cqh}
+body.present .eitem{gap:2.2cqh;padding:2cqh 0}
+
+/* checklist editorial (no bullets, hairline rows) */
+.crows{display:flex;flex-direction:column;margin-top:1cqw}
+.crow{display:flex;gap:1.4cqw;padding:1.4cqw 0;border-top:1px solid var(--rule);align-items:baseline}
+.crow:last-child{border-bottom:1px solid var(--rule)}
+.crow .ck{font-family:'JetBrains Mono';font-size:1.1cqw;color:var(--teal);font-weight:600}
+.crow p{font-size:1.5cqw;line-height:1.4;color:var(--ink-2)}
+.crow p b{font-weight:600;color:var(--ink)}
+body.present .crow p{font-size:1.8cqh}
+body.present .crow .ck{font-size:1.35cqh}
+
+/* ====== big data numbers ====== */
+.stat-band{display:flex;gap:0;margin-top:auto;border-top:1px solid var(--rule-strong)}
+.ink .stat-band{border-color:rgba(255,255,255,.18)}
+.stat-cell{flex:1;padding:2cqw 2cqw 0 0;border-right:1px solid var(--rule)}
+.ink .stat-cell{border-color:rgba(255,255,255,.12)}
+.stat-cell:last-child{border-right:none}
+.stat-cell .v{font-family:'Fraunces',serif;font-weight:600;font-size:4.6cqw;line-height:1;letter-spacing:-.03em;color:var(--ink)}
+.ink .stat-cell .v{color:#fff}
+.stat-cell .v .teal{color:var(--teal)}
+.stat-cell .l{font-family:'JetBrains Mono';font-size:1.05cqw;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-top:.7cqw}
+body.present .stat-cell .v{font-size:5.4cqh}
+body.present .stat-cell .l{font-size:1.25cqh}
+
+/* inline stat trio (for cover-era) */
+.stat-inline{display:flex;gap:4cqw;margin-top:1cqw}
+.stat-inline .v{font-family:'Fraunces',serif;font-weight:600;font-size:4cqw;line-height:1;letter-spacing:-.03em}
+.stat-inline .v .teal{color:var(--teal)}
+.stat-inline .l{font-family:'JetBrains Mono';font-size:1cqw;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-top:.6cqw;line-height:1.4}
+body.present .stat-inline .v{font-size:4.6cqh}
+body.present .stat-inline .l{font-size:1.2cqh}
+
+/* device frames - editorial flat style */
+.frame{border:1px solid var(--rule-strong);background:#fff;position:relative}
+.frame-label{position:absolute;top:-1px;left:-1px;background:var(--ink);color:#fff;font-family:'JetBrains Mono';font-size:.85cqw;letter-spacing:.1em;text-transform:uppercase;padding:.4cqw .9cqw;z-index:2}
+body.present .frame-label{font-size:1.05cqh}
+
+/* phone editorial */
+.phone-e{justify-self:center;width:auto;height:62cqh;aspect-ratio:1000/2000;background:#fff;border:1.5px solid var(--ink);border-radius:0;overflow:hidden;display:flex;flex-direction:column;position:relative}
+body.present .phone-e{height:78cqh}
+.pe-bar{display:flex;justify-content:space-between;padding:1.4cqw 1.6cqw .8cqw;font-family:'JetBrains Mono';font-size:1cqw;color:var(--ink);border-bottom:1px solid var(--rule)}
+.pe-body{padding:1.6cqw;display:flex;flex-direction:column;gap:1.2cqw;flex:1}
+.pe-h{font-family:'Fraunces';font-weight:600;font-size:1.7cqw;color:var(--ink)}
+.pe-job{border:1px solid var(--rule-strong);padding:1.4cqw}
+.pe-job-t{font-family:'Fraunces';font-weight:600;font-size:1.5cqw;color:var(--ink)}
+.pe-job-s{font-size:1.05cqw;color:var(--ink-soft);margin-top:.2cqw}
+.pe-tags{display:flex;gap:.6cqw;margin:1cqw 0}
+.pe-tag{font-family:'JetBrains Mono';font-size:.85cqw;color:var(--teal);border:1px solid var(--teal);padding:.25cqw .6cqw;letter-spacing:.04em}
+.pe-apply{background:var(--teal);color:#fff;text-align:center;padding:.9cqw;font-family:'Inter';font-weight:600;font-size:1.15cqw}
+.pe-cand{border:1px solid var(--rule);padding:1.1cqw;display:flex;align-items:center;gap:1cqw}
+.pe-av{width:3cqw;height:3cqw;border-radius:50%;background:var(--teal-tint);border:1px solid var(--teal);flex:none}
+.pe-score{margin-left:auto;font-family:'JetBrains Mono';font-weight:700;font-size:1.3cqw;color:var(--teal)}
+body.present .pe-bar{font-size:1.15cqh;padding:1.5cqh 1.7cqh .9cqh}
+body.present .pe-body{padding:1.7cqh;gap:1.3cqh}
+body.present .pe-h{font-size:1.9cqh}
+body.present .pe-job-t{font-size:1.7cqh}
+body.present .pe-job-s{font-size:1.2cqh}
+body.present .pe-tag{font-size:1cqh}
+body.present .pe-apply{font-size:1.3cqh}
+body.present .pe-av{width:3.4cqh;height:3.4cqh}
+body.present .pe-score{font-size:1.5cqh}
+
+/* dashboard editorial */
+.dash-e{width:100%;border:1.5px solid var(--ink);background:#fff;display:flex;flex-direction:column}
+.de-top{display:flex;justify-content:space-between;align-items:center;padding:1.5cqw 1.8cqw;border-bottom:1px solid var(--ink)}
+.de-logo{font-family:'Fraunces';font-weight:700;font-size:1.7cqw;color:var(--ink)}
+.de-logo .teal{color:var(--teal)}
+.de-live{font-family:'JetBrains Mono';font-size:.95cqw;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);display:flex;align-items:center;gap:.5cqw}
+.de-live::before{content:"";width:.6cqw;height:.6cqw;border-radius:50%;background:var(--teal)}
+.de-kpis{display:grid;grid-template-columns:repeat(3,1fr)}
+.de-kpi{padding:1.6cqw 1.8cqw;border-right:1px solid var(--rule)}
+.de-kpi:last-child{border-right:none}
+.de-kpi .v{font-family:'Fraunces';font-weight:600;font-size:2.6cqw;line-height:1;color:var(--ink)}
+.de-kpi .l{font-family:'JetBrains Mono';font-size:.85cqw;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-top:.5cqw}
+.de-chart{padding:1.6cqw 1.8cqw;border-top:1px solid var(--rule)}
+body.present .de-logo{font-size:1.9cqh}
+body.present .de-live{font-size:1.15cqh}
+body.present .de-kpi .v{font-size:3cqh}
+body.present .de-kpi .l{font-size:1.05cqh}
+
+/* ====== flywheel (clean line diagram) ====== */
+.fly-stage-e{position:relative;display:grid;place-items:center;height:100%}
+.fly-svg-e{width:96%;max-width:480px}
+body.present .fly-svg-e{max-width:42cqh}
+.spin-slow{transform-origin:center;animation:spin 40s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ====== two-card editorial ====== */
+.duo-cards{display:grid;grid-template-columns:1fr 1fr;gap:0;flex:1;border-top:1px solid var(--rule-strong);border-bottom:1px solid var(--rule-strong)}
+.ink .duo-cards{border-color:rgba(255,255,255,.18)}
+.dc{padding:3cqw 3cqw 3cqw 0;border-right:1px solid var(--rule);display:flex;flex-direction:column;justify-content:center}
+.dc:last-child{border-right:none;padding-left:3cqw;padding-right:0}
+.ink .dc{border-color:rgba(255,255,255,.12)}
+.dc-n{font-family:'JetBrains Mono';font-size:1.1cqw;color:var(--teal);letter-spacing:.1em;margin-bottom:1.2cqw}
+.dc-h{font-family:'Fraunces';font-weight:600;font-size:2.4cqw;color:var(--ink);margin-bottom:1.4cqw}
+.ink .dc-h{color:#fff}
+.dc p{font-size:1.45cqw;line-height:1.5;color:var(--ink-soft)}
+.dc p b{color:var(--ink);font-weight:600}
+.ink .dc p b{color:#fff}
+.dc ul{display:flex;flex-direction:column;gap:.9cqw;margin-top:.4cqw}
+.dc li{list-style:none;font-size:1.4cqw;line-height:1.4;color:var(--ink-soft);padding-left:1.4cqw;position:relative}
+.dc li::before{content:"–";position:absolute;left:0;color:var(--teal)}
+.dc li b{color:var(--ink);font-weight:600}
+.ink .dc li b{color:#fff}
+body.present .dc-n{font-size:1.3cqh}
+body.present .dc-h{font-size:2.8cqh}
+body.present .dc p{font-size:1.7cqh}
+body.present .dc li{font-size:1.65cqh}
+
+/* ====== monetization tables editorial ====== */
+.mon{display:grid;grid-template-columns:1fr 1fr;gap:4cqw;flex:1;align-items:start}
+.mon-side{display:flex;flex-direction:column}
+.mon-side-h{display:flex;align-items:baseline;justify-content:space-between;border-bottom:2px solid var(--ink);padding-bottom:.9cqw;margin-bottom:.4cqw}
+.mon-side-t{font-family:'Fraunces';font-weight:600;font-size:1.9cqw;color:var(--ink)}
+.mon-side-cur{font-family:'JetBrains Mono';font-size:1cqw;letter-spacing:.08em;color:var(--ink-soft)}
+.mon-grp{margin-top:1.2cqw}
+.mon-grp-t{font-family:'JetBrains Mono';font-size:1cqw;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:.5cqw}
+.mon-grp-t .sub{color:var(--ink-faint);text-transform:none;letter-spacing:0;font-size:.9cqw}
+.mr{display:flex;justify-content:space-between;align-items:baseline;padding:.62cqw 0;border-bottom:1px solid var(--rule)}
+.mr:last-child{border-bottom:none}
+.mr-n{font-size:1.25cqw;color:var(--ink-2)}
+.mr-p{font-family:'JetBrains Mono';font-weight:600;font-size:1.4cqw;color:var(--ink);white-space:nowrap}
+.mr-p.free{color:var(--teal)}
+.mr-p .per{font-size:.9cqw;color:var(--ink-faint)}
+body.present .mon-side-t{font-size:2.2cqh}
+body.present .mon-side-cur{font-size:1.15cqh}
+body.present .mon-grp-t{font-size:1.15cqh}
+body.present .mr-n{font-size:1.5cqh}
+body.present .mr-p{font-size:1.65cqh}
+
+/* ====== roadmap editorial ====== */
+.road{display:grid;grid-template-columns:repeat(5,1fr);gap:0;flex:1;align-content:center;border-top:1px solid var(--rule-strong)}
+.ink .road{border-color:rgba(255,255,255,.18)}
+.rstep{padding:2.4cqw 1.6cqw 0 0;border-right:1px solid var(--rule);position:relative}
+.ink .rstep{border-color:rgba(255,255,255,.12)}
+.rstep:last-child{border-right:none}
+.rstep::before{content:"";position:absolute;top:-1px;left:0;width:1.4cqw;height:3px;background:var(--teal)}
+.rstep.now::before{height:5px}
+.rnow{font-family:'JetBrains Mono';font-size:.95cqw;letter-spacing:.14em;color:var(--teal);font-weight:600;margin-bottom:1cqw}
+.rstep-h{font-family:'Fraunces';font-weight:600;font-size:1.95cqw;color:#fff;margin-bottom:.9cqw;line-height:1.05}
+.rstep-d{font-size:1.2cqw;line-height:1.45;color:#A6ABB0}
+body.present .rnow{font-size:1.2cqh}
+body.present .rstep-h{font-size:2.3cqh}
+body.present .rstep-d{font-size:1.45cqh}
+
+/* ====== team editorial ====== */
+.team-e{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid rgba(255,255,255,.18);margin-top:1cqw}
+.tm{padding:2.4cqw 2cqw 0 0;border-right:1px solid rgba(255,255,255,.12)}
+.tm:last-child{border-right:none}
+.tm-n{font-family:'JetBrains Mono';font-size:1cqw;color:var(--teal);margin-bottom:1cqw}
+.tm-name{font-family:'Fraunces';font-weight:600;font-size:2cqw;color:#fff}
+.tm-role{font-size:1.3cqw;color:#A6ABB0;margin-top:.4cqw}
+.tm-bio{font-size:1.15cqw;line-height:1.45;color:#7E848B;margin-top:1.1cqw}
+body.present .tm-name{font-size:2.3cqh}
+body.present .tm-role{font-size:1.5cqh}
+body.present .tm-bio{font-size:1.4cqh}
+
+/* ====== nav / controls ====== */
+.topbar{position:fixed;top:16px;right:20px;z-index:60;display:flex;gap:10px}
+.btn{background:var(--ink);color:#fff;border:none;cursor:pointer;font-family:'JetBrains Mono';font-weight:500;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:11px 18px;display:flex;align-items:center;gap:9px;transition:.18s}
+.btn:hover{background:var(--teal)}
+.btn svg{width:13px;height:13px}
+.navbar{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);padding:8px 10px;display:flex;align-items:center;gap:6px;z-index:50}
+.navbar button{background:none;border:none;color:#fff;cursor:pointer;font-size:18px;width:34px;height:34px;display:grid;place-items:center;transition:.15s}
+.navbar button:hover{color:var(--teal)}
+.navbar .count{color:#fff;font-family:'JetBrains Mono';font-size:12px;font-weight:500;padding:0 8px;min-width:62px;text-align:center}
+
+.present-ui{display:none}
+body.present .present-ui{display:flex;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:100;align-items:center;gap:6px;background:var(--ink);padding:7px 9px;opacity:0;transition:opacity .3s}
+body.present.show-ui .present-ui{opacity:.96}
+.present-ui button{background:none;border:none;color:#fff;cursor:pointer;width:32px;height:32px;display:grid;place-items:center;font-size:16px;transition:.15s}
+.present-ui button:hover{color:var(--teal)}
+.present-ui .pc{color:#fff;font-family:'JetBrains Mono';font-size:11px;font-weight:500;padding:0 8px;min-width:62px;text-align:center}
+.prog{display:none}
+body.present .prog{display:block;position:fixed;top:0;left:0;height:2px;background:var(--teal);z-index:100;transition:width .4s cubic-bezier(.2,.7,.2,1)}
+
+/* ====== PRESENT MODE ====== */
+body.present{overflow:hidden;background:#000}
+body.present .deck{display:block;padding:0;gap:0}
+body.present .topbar,body.present .navbar{display:none}
+body.present .slide{position:fixed;inset:0;width:100vw;height:100vh;max-width:none;aspect-ratio:auto;margin:0;box-shadow:none;display:none;opacity:1;transform:none;container-type:size}
+body.present .slide.active{display:block;animation:fadeIn .5s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+body.present .pad{padding:6cqh 7.5cqh}
+
+/* fragments */
+.frag{opacity:0;transform:translateY(10px);transition:opacity .45s cubic-bezier(.2,.7,.2,1),transform .45s cubic-bezier(.2,.7,.2,1)}
+.frag.show{opacity:1;transform:none}
+body:not(.present) .frag{opacity:1;transform:none}
+
+@media print{
+  body{background:#fff}.navbar,.topbar,.present-ui,.prog{display:none}.deck{gap:0;padding:0}
+  .slide{box-shadow:none;page-break-after:always;width:100vw;opacity:1;transform:none}
+  .frag{opacity:1!important;transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="prog" id="prog"></div>
+<div class="topbar">
+  <button class="btn" id="presentBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M8 5v14l11-7z"/></svg>Present</button>
+</div>
+
+<div class="deck" id="deck">
+
+<section class="slide s-cover" id="s1">
+  <div class="pad">
+    <div class="topline frag">
+      <span class="kicker">Balesh × Orbis</span>
+      <span class="num-idx">Pitch / 2026</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="cover-mid">
+      <!-- ============================================================ -->
+      <!-- SWAP IN YOUR LOGO HERE                                       -->
+      <!-- Replace the <div> below with: <img class="cover-logo frag"  -->
+      <!-- src="YOUR_LOGO.png" alt="Balesh"/>                          -->
+      <!-- (drop the file next to this HTML, or paste a base64 string) -->
+      <!-- ============================================================ -->
+      <img class="cover-logo frag" src="engname.png" alt="Balesh"/>
+
+      <div class="cover-statement frag">Balesh grows MENA's next generation of talent. <span class="teal">Orbis</span>, our AI recruiter, is how the region hires them.</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="trust-row frag">
+      <div class="trust-label">Trusted by teams at</div>
+      <div class="trust-names"><span>Mercedes-Benz</span><span>BMW</span><span>Bank al Etihad</span><span>Central Bank of Jordan</span><span>OpenSooq</span></div>
+    </div>
+  </div>
+  <div class="num-idx" style="position:absolute;bottom:4cqw;right:7cqw;z-index:3">01 / 14</div>
+</section>
+
+<section class="slide ink s-statement" id="s2">
+  <div class="pad">
+    <div class="topline frag">
+      <span class="kicker">Where It Started</span>
+      <span class="num-idx">02 / 14</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="statement-grid">
+      <h2 class="statement-h frag">Talent doesn't open doors here. <span class="teal">Connections do.</span></h2>
+      <div class="statement-aside frag">
+        <div class="big-fig">0</div>
+        <div class="fig-cap">central places to discover early-career opportunities in the region</div>
+      </div>
+    </div>
+    <p class="lead frag" style="margin-top:3cqw;color:#A6ABB0;max-width:62ch">Career-advancing opportunities in MENA rarely exist outside personal networks, and the few that do are nearly impossible to find publicly. The region's brightest get locked out before they start.</p>
+    <div class="spacer"></div>
+  </div>
+  <div class="foot-brand frag">Balesh</div>
+</section>
+
+<section class="slide" id="s3">
+  <div class="pad">
+    <div class="topline frag">
+      <span class="kicker">Chapter 01 / Balesh</span>
+      <span class="num-idx">03 / 14</span>
+    </div>
+    <div class="cols cols-3258" style="margin-top:auto;margin-bottom:auto">
+      <div>
+        <h2 class="d-md frag" style="margin-bottom:1.6cqw">So we built the <span class="teal italic">merit-based</span> marketplace.</h2>
+        <p class="body frag" style="margin-bottom:2.6cqw;max-width:38ch">An app where any student applies to real internships directly. No connections needed, no gatekeepers. We onboarded partner companies to list openings and matched them with local talent.</p>
+        <div class="stat-inline frag">
+          <div><div class="v">50</div><div class="l">Partner<br>companies</div></div>
+          <div><div class="v"><span class="teal">5,000</span></div><div class="l">Students<br>onboarded</div></div>
+          <div><div class="v">2mo</div><div class="l">To<br>traction</div></div>
+        </div>
+      </div>
+      <div class="frag" style="display:flex;justify-content:center">
+        <!-- ============================================================ -->
+        <!-- SWAP IN YOUR BALESH APP SCREENSHOT HERE                      -->
+        <!-- Replace the placeholder <div> below with:                   -->
+        <!--   <img class="phone-ph" src="YOUR_APP_SCREENSHOT.png"        -->
+        <!--        alt="Balesh app" style="object-fit:cover;border:        -->
+        <!--        1.5px solid var(--ink)"/>                              -->
+        <!-- A tall portrait screenshot (approx 1000x2000) fits best.     -->
+        <!-- ============================================================ -->
+       <img class="phone-ph" src="baleshapp.png" alt="Balesh app" style="object-fit:cover"/>
+      </div>
+    </div>
+  </div>
+  <div class="foot-brand frag">Balesh</div>
+</section>
+
+<section class="slide" id="s4">
+  <div class="pad">
+    <div class="topline frag">
+      <span class="kicker">Chapter 02 / The Hard Truth</span>
+      <span class="num-idx">04 / 14</span>
+    </div>
+    <h2 class="d-md frag" style="margin-top:3cqw">Then we ran our first <span class="teal italic">real summer.</span></h2>
+    <p class="body frag" style="margin-top:1cqw;margin-bottom:auto;max-width:54ch">Operating live exposed two problems that would break the business at scale.</p>
+    <div class="duo-cards frag">
+      <div class="dc">
+        <div class="dc-n">PROBLEM 01</div>
+        <div class="dc-h">Seasonality</div>
+        <p>Internship demand spiked in summer and collapsed the rest of the year. A purely student-internship model couldn't sustain steady revenue.</p>
+      </div>
+      <div class="dc">
+        <div class="dc-n">PROBLEM 02</div>
+        <div class="dc-h">Manual filtering</div>
+        <p>Screening interns for companies was painfully manual. Endless hours, effort, and resources per role. It didn't scale, and companies hated doing it themselves.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot-brand frag">Balesh</div>
+</section>
+
+<section class="slide ink s-statement" id="s5">
+  <div class="pad">
+    <div class="topline frag">
+      <span class="kicker">The Insight</span>
+      <span class="num-idx">05 / 14</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="statement-grid">
+      <h2 class="statement-h frag">The companies kept asking us to <span class="teal">do the filtering for them.</span></h2>
+      <div class="statement-aside frag">
+        <div class="big-fig">↗</div>
+        <div class="fig-cap">demand validated by the customers themselves</div>
+      </div>
+    </div>
+    <p class="lead frag" style="margin-top:3cqw;color:#A6ABB0;max-width:62ch">That was the signal. The painful, manual work we were doing internally was exactly what businesses wanted to pay to offload. We weren't sitting on a feature. We were sitting on <b>a product with real, validated demand.</b></p>
+    <div class="spacer"></div>
+  </div>
+  <div class="foot-brand frag">Orbis</div>
+</section>
+
+<section class="slide" id="s6">
+  <div class="pad">
+    <div class="topline frag">
+      <span class="kicker">Chapter 03 / Orbis</span>
+      <span class="num-idx">06 / 14</span>
+    </div>
+    <div class="cols" style="margin-top:auto;margin-bottom:auto;gap:4cqw">
+      <div class="frag">
+        <!-- ============================================================ -->
+        <!-- SWAP IN YOUR ORBIS DASHBOARD SCREENSHOT HERE                 -->
+        <!-- Replace the placeholder <div> below with:                   -->
+        <!--   <img class="dash-ph" src="YOUR_DASHBOARD.png"              -->
+        <!--        alt="Orbis dashboard" style="object-fit:cover;border: -->
+        <!--        1.5px solid var(--ink)"/>                              -->
+        <!-- A landscape screenshot (approx 16:10) fits best.            -->
+        <!-- ============================================================ -->
+        <img class="dash-ph" src="dashboard.png" alt="Orbis dashboard"/>
+      </div>
+      <div>
+        <h2 class="d-md frag" style="margin-bottom:1.4cqw">So we built our own <span class="teal italic">AI recruiter.</span></h2>
+        <p class="body frag" style="margin-bottom:1.4cqw;max-width:40ch">Orbis replaces manual sourcing, screening, and interviews. A scored shortlist in 48 hours. What started as an internal tool became a product we could scale and monetize.</p>
+        <div class="crows">
+          <div class="crow frag"><span class="ck">01</span><p>Cuts hiring time from <b>weeks to days</b>, fully automated end to end.</p></div>
+          <div class="crow frag"><span class="ck">02</span><p><b>Eliminates manual screening</b>, AI sources, interviews, and scores every applicant.</p></div>
+        </div>
+        <div class="stat-inline frag" style="margin-top:1.8cqw">
+          <div><div class="v"><span class="teal">10</span></div><div class="l">Companies<br>onboarded</div></div>
+          <div><div class="v">&lt;6d</div><div class="l">Time<br>to hire</div></div>
+          <div><div class="v">50h+</div><div class="l">Saved<br>per job</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot-brand frag">Orbis</div>
+</section>
+
+<section class="slide" id="s7">
+  <div class="pad">
+    <div class="topline frag">
+      <span class="kicker">Traction</span>
+      <span class="num-idx">07 / 14</span>
+    </div>
+    <h2 class="d-md frag" style="margin:2.2cqw 0 .8cqw">Live, used, and <span class="teal italic">already paid for.</span></h2>
+    <p class="body frag" style="margin-bottom:2cqw;max-width:58ch">Both products are in market today across Jordan and Egypt, with real companies running real hiring through Orbis.</p>
+    <div class="mon" style="align-items:start">
+      <div class="mon-side frag">
+        <div class="mon-side-h"><span class="mon-side-t">Balesh</span><span class="mon-side-cur">Talent supply</span></div>
+        <div class="mon-grp" style="margin-top:1cqw">
+          <div class="mr"><span class="mr-n">Students onboarded</span><span class="mr-p">5,000</span></div>
+          <div class="mr"><span class="mr-n">Partner companies</span><span class="mr-p">50</span></div>
+          <div class="mr"><span class="mr-n">Countries live</span><span class="mr-p">Jordan + Egypt</span></div>
+        </div>
+      </div>
+      <div class="mon-side frag">
+        <div class="mon-side-h"><span class="mon-side-t">Orbis</span><span class="mon-side-cur">Talent demand</span></div>
+        <div class="mon-grp" style="margin-top:1cqw">
+          <div class="mr"><span class="mr-n">Companies onboarded <span style="color:var(--ink-faint)">(in 2 weeks)</span></span><span class="mr-p">10</span></div>
+          <div class="mr"><span class="mr-n">Mix of <b style="color:var(--ink)">paying customers</b> & pilots</span><span class="mr-p free">Live</span></div>
+          <div class="mr"><span class="mr-n">Jobs processed</span><span class="mr-p">12</span></div>
+          <div class="mr"><span class="mr-n">AI interviews completed</span><span class="mr-p">368</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot-brand frag">Balesh × Orbis</div>
+</section>
+
+<section class="slide" id="s8">
+  <div class="pad">
+    <div class="topline frag">
+      <span class="kicker">One Engine, Both Sides</span>
+      <span class="num-idx">08 / 14</span>
+    </div>
+    <h2 class="d-md frag" style="margin-top:3cqw">What we built for Orbis <span class="teal italic">supercharges Balesh.</span></h2>
+    <p class="body frag" style="margin-top:1cqw;margin-bottom:auto;max-width:56ch">The same AI we built to evaluate candidates now helps candidates win, as premium features inside Balesh.</p>
+    <div class="duo-cards frag">
+      <div class="dc">
+        <div class="dc-n">FEATURE 01</div>
+        <div class="dc-h">AI Mock Interviewer</div>
+        <ul>
+          <li>The Orbis interviewer, <b>repurposed as practice</b></li>
+          <li>Students rehearse real interviews, get <b>scored feedback</b></li>
+          <li>Walk into the real thing <b>already sharp</b></li>
+        </ul>
+      </div>
+      <div class="dc">
+        <div class="dc-n">FEATURE 02</div>
+        <div class="dc-h">AI CV Builder</div>
+        <ul>
+          <li>Builds and <b>customizes a CV per application</b></li>
+          <li>Adapts to each role's exact requirements</li>
+          <li>Every student applies <b>at their best</b></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="foot-brand frag">Balesh × Orbis</div>
+</section>
+
+<section class="slide ink" id="s9">
+  <div class="pad">
+    <div class="topline frag">
+      <span class="kicker">Why This Compounds</span>
+      <span class="num-idx">09 / 14</span>
+    </div>
+    <div class="cols" style="margin-top:auto;margin-bottom:auto;gap:4cqw">
+      <div>
+        <h2 class="d-md frag" style="color:#fff;margin-bottom:2cqw">It all feeds <span class="teal italic">one self-reinforcing loop.</span></h2>
+        <div class="elist">
+          <div class="eitem frag" style="border-color:rgba(255,255,255,.14)"><span class="enum">B</span><p style="color:#C9CDD2"><b style="color:#fff">Balesh grows the talent.</b> Every student deepens the pool Orbis hires from.</p></div>
+          <div class="eitem frag" style="border-color:rgba(255,255,255,.14)"><span class="enum">O</span><p style="color:#C9CDD2"><b style="color:#fff">Orbis monetizes it.</b> Companies pay to source and screen from that pool.</p></div>
+          <div class="eitem frag" style="border-color:rgba(255,255,255,.14);border-bottom-color:rgba(255,255,255,.14)"><span class="enum">↻</span><p style="color:#C9CDD2"><b style="color:#fff">Each makes the other stronger.</b> More talent sharpens Orbis. More hiring pulls more students to Balesh.</p></div>
+        </div>
+      </div>
+      <div class="fly-stage-e frag">
+        <svg class="fly-svg-e" viewBox="0 0 360 360">
+          <defs>
+            <marker id="ar" markerWidth="8" markerHeight="8" refX="4" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L6,3 L0,6 Z" fill="#0E8FA3"/></marker>
+          </defs>
+          <circle cx="180" cy="180" r="135" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+          <g class="spin-slow">
+            <circle cx="180" cy="45" r="5" fill="#0E8FA3"/>
+            <circle cx="180" cy="315" r="5" fill="#0E8FA3"/>
+          </g>
+          <path d="M180 60 A120 120 0 0 1 300 180" fill="none" stroke="#0E8FA3" stroke-width="2.5" marker-end="url(#ar)"/>
+          <path d="M180 300 A120 120 0 0 1 60 180" fill="none" stroke="#0E8FA3" stroke-width="2.5" marker-end="url(#ar)"/>
+          <text x="180" y="172" text-anchor="middle" fill="#fff" font-family="Fraunces" font-weight="600" font-size="20" font-style="italic">Talent</text>
+          <text x="180" y="200" text-anchor="middle" fill="#0E8FA3" font-family="JetBrains Mono" font-size="11" letter-spacing="3">FLYWHEEL</text>
+          <text x="180" y="38" text-anchor="middle" fill="#A6ABB0" font-family="JetBrains Mono" font-size="9" letter-spacing="2">BALESH</text>
+          <text x="180" y="332" text-anchor="middle" fill="#A6ABB0" font-family="JetBrains Mono" font-size="9" letter-spacing="2">ORBIS</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="foot-brand frag">Balesh × Orbis</div>
+</section>
+
+<section class="slide ink" id="s10">
+  <div class="pad">
+    <div class="topline frag">
+      <span class="kicker">Market Size</span>
+      <span class="num-idx">10 / 14</span>
+    </div>
+    <h2 class="d-md frag" style="color:#fff;margin-top:2.2cqw;margin-bottom:.8cqw">How big this can <span class="teal italic">become.</span></h2>
+    <p class="body frag" style="color:#A6ABB0;margin-bottom:auto;max-width:58ch">The MENA recruitment market is large, fragmented, and shifting to AI. We start with early-career hiring and expand outward.</p>
+    <div class="road frag" style="grid-template-columns:repeat(3,1fr)">
+      <div class="rstep">
+        <div class="rnow">TAM</div>
+        <div class="rstep-h" style="font-size:3.4cqw">$86.1B</div>
+        <div class="rstep-d">Global recruitment market by 2028. The full long-term opportunity. <span style="color:#5A6066">(GlobeNewswire)</span></div>
+      </div>
+      <div class="rstep">
+        <div class="rnow">SAM</div>
+        <div class="rstep-h" style="font-size:3.4cqw">MENA hiring</div>
+        <div class="rstep-d">Recruitment across Jordan, Egypt, the Gulf and wider Arab markets we can serve.</div>
+      </div>
+      <div class="rstep">
+        <div class="rnow">SOM</div>
+        <div class="rstep-h" style="font-size:3.4cqw">SME + early-career</div>
+        <div class="rstep-d">Our wedge: SMEs priced out of traditional recruiters, hiring interns and junior talent.</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot-brand frag">Balesh × Orbis</div>
+</section>
+
+<section class="slide" id="s11">
+  <div class="pad">
+    <div class="topline frag">
+      <span class="kicker">Timing</span>
+      <span class="num-idx">11 / 14</span>
+    </div>
+    <h2 class="d-md frag" style="margin-top:3cqw">Why <span class="teal italic">now?</span></h2>
+    <div class="duo-cards frag" style="margin-top:3cqw">
+      <div class="dc">
+        <div class="dc-n">MARKET SHIFT</div>
+        <div class="dc-h">Hiring is changing fast</div>
+        <ul>
+          <li>AI recruiting adoption is <b>accelerating</b> across the region</li>
+          <li>SMEs <b>can't afford</b> traditional recruiters or agencies</li>
+          <li>MENA hiring is still <b>fragmented and offline</b></li>
+        </ul>
+      </div>
+      <div class="dc">
+        <div class="dc-n">TECHNOLOGY</div>
+        <div class="dc-h">Agentic AI is here</div>
+        <ul>
+          <li>Handles recruitment <b>end to end</b></li>
+          <li>Mimics <b>human-like interviews</b> at scale</li>
+          <li>Finally <b>affordable for SMEs</b></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="foot-brand frag">Balesh × Orbis</div>
+</section>
+
+<section class="slide" id="s12">
+  <div class="pad">
+    <div class="topline frag">
+      <span class="kicker">Monetization</span>
+      <span class="num-idx">12 / 14</span>
+    </div>
+    <h2 class="d-md frag" style="margin:2.4cqw 0 2cqw">Both sides pay. <span class="teal italic">One flywheel.</span></h2>
+    <div class="mon">
+      <div class="mon-side frag">
+        <div class="mon-side-h"><span class="mon-side-t">Companies · Orbis</span><span class="mon-side-cur">JD</span></div>
+        <div class="mon-grp">
+          <div class="mon-grp-t">Post on Balesh</div>
+          <div class="mr"><span class="mr-n">List & review manually</span><span class="mr-p free">Free</span></div>
+          <div class="mr"><span class="mr-n">+ Hard filters & semantic CV match</span><span class="mr-p">30</span></div>
+        </div>
+        <div class="mon-grp">
+          <div class="mon-grp-t">Full Orbis <span class="sub">distribution · analytics · dashboard</span></div>
+          <div class="mr"><span class="mr-n">Per job post</span><span class="mr-p">150</span></div>
+          <div class="mr"><span class="mr-n">5 posts</span><span class="mr-p">700</span></div>
+          <div class="mr"><span class="mr-n">7 posts</span><span class="mr-p">945</span></div>
+          <div class="mr"><span class="mr-n">10 posts</span><span class="mr-p">1,200</span></div>
+          <div class="mr"><span class="mr-n">Enterprise · unlimited / yr</span><span class="mr-p">7.5–12.5K</span></div>
+        </div>
+      </div>
+      <div class="mon-side frag">
+        <div class="mon-side-h"><span class="mon-side-t">Students · Balesh</span><span class="mon-side-cur">JD</span></div>
+        <div class="mon-grp">
+          <div class="mon-grp-t">Subscriptions</div>
+          <div class="mr"><span class="mr-n">2 applications / week</span><span class="mr-p free">Free</span></div>
+          <div class="mr"><span class="mr-n">16/mo + CV enhancer</span><span class="mr-p">5<span class="per">/mo</span></span></div>
+          <div class="mr"><span class="mr-n">Unlimited + CV + 2 mock interviews</span><span class="mr-p">9<span class="per">/mo</span></span></div>
+        </div>
+        <div class="mon-grp">
+          <div class="mon-grp-t">Application credit bundles</div>
+          <div class="mr"><span class="mr-n">1 credit</span><span class="mr-p">1.75</span></div>
+          <div class="mr"><span class="mr-n">3 credits</span><span class="mr-p">4.80</span></div>
+          <div class="mr"><span class="mr-n">5 credits</span><span class="mr-p">7.50</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot-brand frag">Balesh × Orbis</div>
+</section>
+
+<section class="slide ink" id="s13">
+  <div class="pad">
+    <div class="topline frag">
+      <span class="kicker">Where We Are → Where We're Going</span>
+      <span class="num-idx">13 / 14</span>
+    </div>
+    <h2 class="d-md frag" style="color:#fff;margin-top:2.4cqw">The road from <span class="teal italic">here.</span></h2>
+    <p class="body frag" style="margin-top:1cqw;margin-bottom:auto;max-width:56ch;color:#A6ABB0">We're live in two countries today. Here's how we go from a regional pilot to the hiring layer the Arab world runs on.</p>
+    <div class="road frag">
+      <div class="rstep now">
+        <div class="rnow">NOW</div>
+        <div class="rstep-h">Live in 2 Countries</div>
+        <div class="rstep-d">Balesh + Orbis running in Jordan and Egypt. 10 companies on Orbis in 2 weeks.</div>
+      </div>
+      <div class="rstep">
+        <div class="rnow" style="color:#5A6066">NEXT</div>
+        <div class="rstep-h">Externships</div>
+        <div class="rstep-d">Launch the first regional externship program with local Arab companies.</div>
+      </div>
+      <div class="rstep">
+        <div class="rnow" style="color:#5A6066">THEN</div>
+        <div class="rstep-h">Gulf Expansion</div>
+        <div class="rstep-d">Bring both products into the UAE and Saudi Arabia.</div>
+      </div>
+      <div class="rstep">
+        <div class="rnow" style="color:#5A6066">THEN</div>
+        <div class="rstep-h">Paid Listings</div>
+        <div class="rstep-d">Monetize internship listings as company demand deepens.</div>
+      </div>
+      <div class="rstep">
+        <div class="rnow" style="color:#5A6066">GOAL</div>
+        <div class="rstep-h">Market Dominance</div>
+        <div class="rstep-d">Master Orbis until we own regional hiring end to end.</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot-brand frag">Balesh × Orbis</div>
+</section>
+
+<section class="slide ink" id="s14">
+  <div class="pad">
+    <div class="topline frag">
+      <span class="kicker">Our Vision</span>
+      <span class="num-idx">14 / 14</span>
+    </div>
+    <div class="spacer"></div>
+    <h2 class="statement-h frag" style="font-size:4.2cqw;max-width:22ch;margin-bottom:1cqw">Not another recruiting tool. The <span class="teal">hiring infrastructure</span> the region runs on.</h2>
+    <p class="frag" style="font-family:'JetBrains Mono';font-size:1.1cqw;letter-spacing:.04em;color:var(--teal);margin-bottom:2.6cqw">A lean founding team that built every product in-house, at little to no cost.</p>
+    <div class="team-e frag">
+      <div class="tm">
+        <div class="tm-n">01</div>
+        <div class="tm-name">Salma Nsour</div>
+        <div class="tm-role">Cofounder & CEO</div>
+        <div class="tm-bio">Built Balesh from zero and secured 50 partner companies. Leads strategy and growth.</div>
+      </div>
+      <div class="tm">
+        <div class="tm-n">02</div>
+        <div class="tm-name">Sanad AlBilleh</div>
+        <div class="tm-role">Cofounder & CTO</div>
+        <div class="tm-bio">Built the entire AI infrastructure behind Orbis end to end. Owns all engineering.</div>
+      </div>
+      <div class="tm">
+        <div class="tm-n">03</div>
+        <div class="tm-name">Suhail Qubti</div>
+        <div class="tm-role">Cofounder & COO</div>
+        <div class="tm-bio">Drives operations and company partnerships. Closes and onboards every client.</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="frag" style="font-family:'JetBrains Mono';font-size:1.2cqw;color:#A6ABB0;border-top:1px solid rgba(255,255,255,.18);padding-top:1.6cqw">+962 77 999 1099&nbsp;&nbsp;·&nbsp;&nbsp;suhailqubti@baleshapp.com</div>
+  </div>
+</section>
+
+</div>
+
+<div class="navbar">
+  <button id="prev">‹</button>
+  <span class="count" id="count">01 / 14</span>
+  <button id="next">›</button>
+</div>
+
+<div class="present-ui">
+  <button id="pPrev">‹</button>
+  <span class="pc" id="pc">01 / 14</span>
+  <button id="pNext">›</button>
+  <button id="pExit" style="font-size:13px">✕</button>
+</div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+const count=document.getElementById('count');
+const pad=n=>String(n+1).padStart(2,'0');
+let idx=0;
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.2});
+slides.forEach(s=>io.observe(s));
+function goScroll(i){idx=Math.max(0,Math.min(slides.length-1,i));slides[idx].scrollIntoView({behavior:'smooth',block:'center'});count.textContent=pad(idx)+' / '+slides.length;}
+document.getElementById('next').onclick=()=>goScroll(idx+1);
+document.getElementById('prev').onclick=()=>goScroll(idx-1);
+const tr=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){idx=slides.indexOf(e.target);count.textContent=pad(idx)+' / '+slides.length}}),{threshold:.6});
+slides.forEach(s=>tr.observe(s));
+
+let present=false,cur=0,fragStep=0;
+const prog=document.getElementById('prog'),pc=document.getElementById('pc');
+const fragsOf=i=>[...slides[i].querySelectorAll('.frag')];
+function renderFrags(){fragsOf(cur).forEach((el,k)=>el.classList.toggle('show',k<fragStep));}
+function updateChrome(){pc.textContent=pad(cur)+' / '+slides.length;prog.style.width=(cur/(slides.length-1)*100)+'%';}
+function showSlide(i,dir){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach(s=>s.classList.remove('active'));
+  slides[cur].classList.add('active');
+  fragStep=0;renderFrags();updateChrome();
+  setTimeout(()=>{fragStep=1;renderFrags();},dir==='back'?0:340);
+}
+function advance(){const t=fragsOf(cur).length;if(fragStep<t){fragStep++;renderFrags();}else if(cur<slides.length-1){showSlide(cur+1,'fwd');}}
+function back(){if(fragStep>1){fragStep--;renderFrags();}else if(cur>0){showSlide(cur-1,'back');const t=fragsOf(cur).length;fragStep=t;renderFrags();updateChrome();}}
+function enterPresent(){present=true;document.body.classList.add('present');if(document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(()=>{});cur=0;showSlide(0,'fwd');}
+function exitPresent(){present=false;document.body.classList.remove('present');slides.forEach(s=>s.classList.remove('active'));if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});slides[cur]?.scrollIntoView({block:'center'});}
+document.getElementById('presentBtn').onclick=enterPresent;
+document.getElementById('pNext').onclick=advance;
+document.getElementById('pPrev').onclick=back;
+document.getElementById('pExit').onclick=exitPresent;
+document.addEventListener('click',e=>{if(!present)return;if(e.target.closest('.present-ui'))return;advance();});
+let uiT;document.addEventListener('mousemove',()=>{if(!present)return;document.body.classList.add('show-ui');clearTimeout(uiT);uiT=setTimeout(()=>document.body.classList.remove('show-ui'),2000);});
+document.addEventListener('keydown',e=>{
+  if(present){
+    if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)){e.preventDefault();advance();}
+    else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();back();}
+    else if(e.key==='Escape')exitPresent();
+    else if(e.key==='Home')showSlide(0,'fwd');
+    else if(e.key==='End')showSlide(slides.length-1,'fwd');
+  }else{
+    if(e.key==='f'||e.key==='F')enterPresent();
+    else if(['ArrowRight','ArrowDown',' '].includes(e.key)){e.preventDefault();goScroll(idx+1);}
+    else if(['ArrowLeft','ArrowUp'].includes(e.key)){e.preventDefault();goScroll(idx-1);}
+  }
+});
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&present)exitPresent();});
+</script>
+</body>
+</html>
